@@ -21,7 +21,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/login", formData);
+      const response = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/login", formData);
       const { token } = response.data;
 
       localStorage.setItem("token", token);

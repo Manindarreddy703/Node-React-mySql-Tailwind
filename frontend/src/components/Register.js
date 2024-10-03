@@ -25,7 +25,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/register", formData);
+      const response = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/register", formData);
       const { token } = response.data;
 
       // Store the token (localStorage or sessionStorage)
@@ -58,7 +58,7 @@ const Register = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:5000/api/google-register", userData);
+      const res = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/google-register", userData);
       const { token } = res.data;
 
       localStorage.setItem("token", token);

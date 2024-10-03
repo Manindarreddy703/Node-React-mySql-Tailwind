@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { GoogleLogin } from 'react-google-login'; // Import Google Login
+import { GoogleLogin } from '@react-oauth/google'; // Import new Google Login
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -47,18 +47,11 @@ const Register = () => {
   };
 
   // Handle Google login success
-  const handleGoogleSuccess = async (response) => {
-    const { profileObj, tokenId } = response; // Extract the profile object and token ID
-
-    const userData = {
-      email: profileObj.email,
-      firstname: profileObj.givenName,
-      lastname: profileObj.familyName,
-      googleToken: tokenId // Include the token for your backend
-    };
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const { credential } = credentialResponse; // Extract credential
 
     try {
-      const res = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/google-register", userData);
+      const res = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/google-register", { idToken: credential });
       const { token } = res.data;
 
       localStorage.setItem("token", token);
@@ -70,8 +63,7 @@ const Register = () => {
   };
 
   // Handle Google login failure
-  const handleGoogleFailure = (error) => {
-    console.error("Google login failed:", error);
+  const handleGoogleFailure = () => {
     setErrorMessage("Google login failed");
   };
 
@@ -84,7 +76,7 @@ const Register = () => {
       </div>
       <div className="md:w-2/3 mx-auto w-full pb-16 lg:w-1/3">
         <form className="shadow-lg mb-4 rounded-lg py-10 px-8" onSubmit={handleSubmit}>
-          {/* Existing input fields... */}
+          {/* Existing input fields */}
           <div className="mb-4">
             <label htmlFor="firstname" className="block text-sm font-bold">Firstname</label>
             <input id="firstname" type="text" placeholder="Firstname" required value={formData.firstname} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
@@ -118,11 +110,9 @@ const Register = () => {
 
         {/* Google Login Button */}
         <GoogleLogin
-          clientId="1234567890-abcdefghij.apps.googleusercontent.com" // Replace with your actual client ID
-          buttonText="Sign up with Google"
           onSuccess={handleGoogleSuccess}
-          onFailure={handleGoogleFailure}
-          cookiePolicy={'single_host_origin'}
+          onError={handleGoogleFailure}
+          text="Sign up with Google"
           className="mt-4"
         />
       </div>

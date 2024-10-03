@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 
 // MySQL connection
 const db = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: '',
-  database: 'taskmanager'
+  host: 'bef3ctd9ymo2nxr0kids-mysql.services.clever-cloud.com',
+  user: 'udloec9nlfdg5ie0',
+  password: 'cvCjFvMNjG2661tOEpdj',
+  database: 'bef3ctd9ymo2nxr0kids'
 });
 
 db.connect(err => {

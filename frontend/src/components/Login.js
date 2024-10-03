@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Import useAuth
-import { GoogleLogin } from "react-google-login";
+import { GoogleLogin } from "@react-oauth/google"; // Import new Google Login
 
 const Login = () => {
   const { login } = useAuth(); // Get the login function from context
@@ -21,7 +21,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/login", formData);
+      const response = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/login", formData);
       const { token } = response.data;
 
       localStorage.setItem("token", token);
@@ -37,17 +37,17 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSuccess = async (response) => {
-    const { tokenId } = response; // Get the tokenId from the response
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const { credential } = credentialResponse; // Get the credential token from the response
 
     try {
-      // Send tokenId to your backend for verification
-      const res = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/google-login", { idToken: tokenId });
+      // Send credential to your backend for verification
+      const res = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/google-login", { idToken: credential });
       const { token } = res.data;
 
       localStorage.setItem("token", token);
       login(); // Call login function from context
-      alert("Login successful!");
+      alert("Google login successful!");
       navigate("/dashboard");
     } catch (error) {
       console.error("Error with Google login:", error);
@@ -55,8 +55,7 @@ const Login = () => {
     }
   };
 
-  const handleGoogleFailure = (response) => {
-    console.error("Google login failed:", response);
+  const handleGoogleFailure = () => {
     setErrorMessage("Google login failed");
   };
 
@@ -120,12 +119,9 @@ const Login = () => {
 
         <div className="mt-6">
           <GoogleLogin
-            clientId="1234567890-abcdefghij.apps.googleusercontent.com" // Replace with your client ID
-            buttonText="Login with Google"
             onSuccess={handleGoogleSuccess}
-            onFailure={handleGoogleFailure}
-            cookiePolicy={'single_host_origin'}
-            style={{ marginTop: '20px' }}
+            onError={handleGoogleFailure}
+            text="Sign in with Google"
           />
         </div>
       </div>

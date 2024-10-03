@@ -25,7 +25,7 @@ db.connect(err => {
 
 require('dotenv').config();
 
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = 'Manindar-reddy'
 
 
 // Example JWT creation

@@ -3,14 +3,13 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import Modal from "react-modal";
 
-// Item type for drag-and-drop
 const ItemType = {
   TODO: 'todo',
 };
 
-// Draggable Todo Item Component
 const TodoItem = ({ todo, index, moveTodo, onEdit, onDelete }) => {
   const [, ref] = useDrag({
     type: ItemType.TODO,
@@ -47,8 +46,16 @@ const AdminDashboard = () => {
   const [newTodo, setNewTodo] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); // Step 1: Create search state
-  const { isAuthenticated } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
+  const { isAuthenticated } = useAuth(); // Get authentication status from context
+  const navigate = useNavigate(); // For navigation
+
+  // Check if user is authenticated, otherwise redirect to login
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login"); // Redirect to login if not authenticated
+    }
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -136,7 +143,6 @@ const AdminDashboard = () => {
     setEditingTodo(null);
   };
 
-  // Step 2: Filter todos based on the search query
   const filteredTodos = todos.filter(todo =>
     todo.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -151,7 +157,7 @@ const AdminDashboard = () => {
           type="text"
           placeholder="Search todos..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)} // Step 3: Capture search query
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 mb-4 rounded"
         />
 

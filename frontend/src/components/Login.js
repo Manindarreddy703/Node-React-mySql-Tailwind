@@ -42,7 +42,7 @@ const Login = () => {
 
     try {
       // Send tokenId to your backend for verification
-      const res = await axios.post("http://localhost:5000/api/google-login", { idToken: tokenId });
+      const res = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/google-login", { idToken: tokenId });
       const { token } = res.data;
 
       localStorage.setItem("token", token);

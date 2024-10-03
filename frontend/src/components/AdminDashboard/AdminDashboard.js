@@ -60,7 +60,7 @@ const AdminDashboard = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:5000/api/todos", {
+        const response = await axios.get("https://node-react-my-sql-tailwind-backend.vercel.app/api/todos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTodos(response.data);
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/todos",
+        "https://node-react-my-sql-tailwind-backend.vercel.app/api/todos",
         { title: newTodo },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/todos/${updatedTodo.id}`,
+        `https://node-react-my-sql-tailwind-backend.vercel.app/api/todos/${updatedTodo.id}`,
         { title: updatedTodo.title },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
     const token = localStorage.getItem("token");
     
     try {
-      await axios.delete(`http://localhost:5000/api/todos/${id}`, {
+      await axios.delete(`https://node-react-my-sql-tailwind-backend.vercel.app/api/todos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTodos(todos.filter((todo) => todo.id !== id));

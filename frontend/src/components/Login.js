@@ -1,8 +1,8 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Import useAuth
+import { GoogleLogin } from "react-google-login";
 
 const Login = () => {
   const { login } = useAuth(); // Get the login function from context
@@ -21,7 +21,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://node-react-my-sql-tailwind-backend.vercel.app/api/login", formData);
+      const response = await axios.post("http://localhost:5000/api/login", formData);
       const { token } = response.data;
 
       localStorage.setItem("token", token);
@@ -37,10 +37,32 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSuccess = async (response) => {
+    const { tokenId } = response; // Get the tokenId from the response
+
+    try {
+      // Send tokenId to your backend for verification
+      const res = await axios.post("http://localhost:5000/api/google-login", { idToken: tokenId });
+      const { token } = res.data;
+
+      localStorage.setItem("token", token);
+      login(); // Call login function from context
+      alert("Login successful!");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error with Google login:", error);
+      setErrorMessage("Google login failed");
+    }
+  };
+
+  const handleGoogleFailure = (response) => {
+    console.error("Google login failed:", response);
+    setErrorMessage("Google login failed");
+  };
+
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Sign in to your account
         </h2>
@@ -49,10 +71,7 @@ const Login = () => {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
+            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
               Email address
             </label>
             <div className="mt-2">
@@ -70,10 +89,7 @@ const Login = () => {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
+            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
               Password
             </label>
             <div className="mt-2">
@@ -90,9 +106,7 @@ const Login = () => {
             </div>
           </div>
 
-          {errorMessage && (
-            <p className="text-red-500">{errorMessage}</p>
-          )}
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
           <div>
             <button
@@ -103,6 +117,17 @@ const Login = () => {
             </button>
           </div>
         </form>
+
+        <div className="mt-6">
+          <GoogleLogin
+            clientId="1234567890-abcdefghij.apps.googleusercontent.com" // Replace with your client ID
+            buttonText="Login with Google"
+            onSuccess={handleGoogleSuccess}
+            onFailure={handleGoogleFailure}
+            cookiePolicy={'single_host_origin'}
+            style={{ marginTop: '20px' }}
+          />
+        </div>
       </div>
     </div>
   );
